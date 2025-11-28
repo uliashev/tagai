@@ -19,6 +19,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
+    'users',
+    'ninja_extra',
 ]
 
 MIDDLEWARE = [
@@ -92,3 +94,10 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.User'
+
+NINJA_JWT = {
+    'ACCESS_TOKEN_LIFETIME': 60 * 60,  # 1 hour
+    'REFRESH_TOKEN_LIFETIME': 60 * 60 * 24 * 7,  # 7 days
+}

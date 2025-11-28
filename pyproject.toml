@@ -20,6 +20,7 @@ dependencies = [
     "mypy",
     "ruff",
     "psycopg[binary]>=3.2.13",
+    "django-ninja-jwt>=5.4.0",
 ]
 
 [dependency-groups]
