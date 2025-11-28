@@ -10,3 +10,6 @@ class CustomUserAdmin(UserAdmin):
             "fields": ("username", "password1", "password2"),
         }),
     )
+
+    class Media:
+        js = ("users/js/random_password.js",)
