@@ -1,75 +1,89 @@
-# Архитектура проекта
+Here is the English translation:
+
+---
+
+# Project Architecture
 
 ### API
-API реализован через **Django Ninja (FastAPI-like)** — используй его стиль:
-- `@router.get`, `@router.post`
-- Pydantic-модели для запросов/ответов
-- автоматическая генерация OpenAPI
-- Валидация данных — **Pydantic v2.11**, а не Django Forms/DRF
-- Работа с базой — **PostgreSQL 16** через `psycopg3`
 
-**Новые модели** создавай, наследуясь от `class BaseModel` в `core/models.py`.
+The API is implemented using **Django Ninja (FastAPI-like)** — follow its style:
 
----
+* `@router.get`, `@router.post`
+* Pydantic models for request/response schemas
+* automatic OpenAPI generation
+* Data validation via **Pydantic v2.11**, not Django Forms/DRF
+* Database access — **PostgreSQL 16** via `psycopg3`
 
-# Рендеринг и фронтенд
-
-- Всегда использовать **Django Templates** для рендеринга HTML.
-- **Bootstrap** — для визуального оформления интерфейса (сетка, кнопки, формы, навигация, модальные окна).
-- **HTMX** — для интерактивности:
-  - частичная загрузка HTML,
-  - обработка форм,
-  - обновление DOM через `hx-get` / `hx-post` / `hx-target` / `hx-swap`.
-- Не использовать **React/Vue/Angular**.
-- Ответы сервера — **HTML или HTML-фрагменты**.
-- JavaScript писать минимально; предпочтение отдавать встроенным возможностям Bootstrap и HTMX.
+Create **new models** by inheriting from `class BaseModel` in `core/models.py`.
 
 ---
 
-# 🔹 Стиль кода и качество
+# Rendering and Frontend
 
-Ты должен всегда следовать следующим инструментам и стандартам:
+* Always use **Django Templates** to render HTML.
+* **Bootstrap** — for UI styling (grid, buttons, forms, navigation, modals).
+* **HTMX** — for interactivity:
+
+  * partial HTML loading,
+  * form handling,
+  * DOM updates via `hx-get` / `hx-post` / `hx-target` / `hx-swap`.
+* Do not use **React/Vue/Angular**.
+* Server responses must be **HTML or HTML fragments**.
+* Write JavaScript minimally; prefer built-in Bootstrap and HTMX features.
+
+---
+
+# 🔹 Code Style and Quality
+
+You must always follow these tools and standards:
 
 ### ✦ Ruff
-- Соблюдай стиль форматирования и линтинга Ruff.
-- Избегай неиспользуемых импортов, длинных строк, грязных конструкций.
+
+* Follow Ruff formatting and linting rules.
+* Avoid unused imports, long lines, and messy constructions.
 
 ### ✦ Mypy
-- Пиши корректные type hints.
-- Возвращай строго типизированный код.
+
+* Write correct type hints.
+* Return strictly typed code.
 
 ### ✦ Pytest
-- Примеры тестов — в стиле pytest (функциональные тесты, фикстуры).
-- Не использовать Django TestCase.
-- Писать только то, что реально применимо в Django + Ninja + Pydantic проекте.
+
+* Test examples must use pytest style (functional tests, fixtures).
+* Do not use Django TestCase.
+* Write only what is applicable to a Django + Ninja + Pydantic project.
 
 ---
 
-# 🔹 Зависимости
+# 🔹 Dependencies
 
-Проект использует **uv**, поэтому:
-- Приводи зависимости в формате:
+The project uses **uv**, therefore:
+
+* Provide dependencies in the format:
   `uv add ...`
-- Не использовать `pip` в примерах.
+* Do not use `pip` in examples.
 
 ---
 
-# Код и подходы, которых нужно придерживаться
+# Code and Patterns to Follow
 
-- Используй **асинхронные обработчики**, если это возможно в Django Ninja.
-- Всегда разделяй:
-  - API-слой (Ninja),
-  - сервисы (чистая бизнес-логика),
-  - модели (Django ORM).
-- Используй dataclasses или Pydantic-модели для передачи данных между слоями.
-- SQL используй только если ORM не хватает.
-- Объяснения давай краткие, структурированные, желательно с примерами.
+* Use **asynchronous handlers** whenever possible with Django Ninja.
+* Always separate:
+
+  * API layer (Ninja),
+  * services (pure business logic),
+  * models (Django ORM).
+* Use dataclasses or Pydantic models for passing data between layers.
+* Use SQL only when ORM is insufficient.
+* Explanations must be brief, structured, and preferably with examples.
 
 ---
 
-# 🔹 Запрещено
+# 🔹 Forbidden
 
-- Предлагать **DRF**, **FastAPI**, **Flask** или что-то вне стека.
-- Использовать `pip` / `venv`.
-- Использовать `psycopg2` или другие несовместимые библиотеки.
-- Предлагать решения вне Docker-парадигмы.
+* Suggesting **DRF**, **FastAPI**, **Flask**, or anything outside this stack.
+* Using `pip` / `venv`.
+* Using `psycopg2` or other incompatible libraries.
+* Suggesting solutions outside a Docker-based workflow.
+
+---
