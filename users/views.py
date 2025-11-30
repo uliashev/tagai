@@ -56,3 +56,12 @@ def upload_files(request):
         saved_files.append(file.name)
         
     return JsonResponse({'message': f'Successfully uploaded {len(saved_files)} files', 'files': saved_files})
+
+@login_required
+def file_list(request):
+    upload_dir = settings.TEMP_UPLOAD_DIR
+    files = []
+    if upload_dir.exists():
+        files = [f.name for f in upload_dir.iterdir() if f.is_file()]
+    
+    return render(request, 'users/files.html', {'files': files})

@@ -10,20 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="sidebar">
-        <a href="{% url 'home' %}" class="sidebar-item active">
-            <i class="fas fa-cloud-upload-alt sidebar-icon"></i>
-            Upload Files
-        </a>
-        <a href="#" class="sidebar-item">
-            <i class="fas fa-tags sidebar-icon"></i>
-            Keywording Tool
-        </a>
-        <a href="{% url 'settings' %}" class="sidebar-item">
-            <i class="fas fa-cog sidebar-icon"></i>
-            Settings
-        </a>
-    </div>
+    {% include 'users/sidebar.html' %}
 
     <div class="main-content">
         <form action="{% url 'logout' %}" method="post">

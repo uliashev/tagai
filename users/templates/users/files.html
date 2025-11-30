@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Files - Tagai</title>
+    <link rel="stylesheet" href="{% static 'users/css/dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .files-container {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            background-color: var(--sidebar-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .file-list-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #444;
+            color: var(--text-color);
+        }
+        .file-list-item:last-child {
+            border-bottom: none;
+        }
+        .file-list-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .file-icon {
+            margin-right: 15px;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+        .file-name {
+            flex-grow: 1;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    {% include 'users/sidebar.html' %}
+
+    <div class="main-content">
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+
+        <div class="files-container">
+            <h2 style="margin-top: 0; margin-bottom: 20px; color: #fff;">Uploaded Files</h2>
+            
+            {% if files %}
+                <div class="file-list">
+                    {% for file in files %}
+                        <div class="file-list-item">
+                            <i class="fas fa-file file-icon"></i>
+                            <span class="file-name">{{ file }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 15px; display: block;"></i>
+                    No files uploaded yet.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
