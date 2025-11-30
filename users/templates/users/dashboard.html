@@ -31,11 +31,117 @@
             <button type="submit" class="logout-btn">Logout</button>
         </form>
 
-        <div class="drop-zone">
+        <div class="drop-zone" id="dropZone">
             <i class="fas fa-cloud-upload-alt drop-zone-icon"></i>
             <div class="drop-zone-text">Drop files here</div>
-            <div class="drop-zone-subtext">or click to browse (max 500 files)</div>
+            <div class="drop-zone-subtext">or click to browse (max 20 files)</div>
+            <input type="file" id="fileInput" multiple style="display: none;">
         </div>
+        <div id="fileList"></div>
+        <div id="uploadStatus" style="margin-top: 20px; text-align: center; display: none;"></div>
     </div>
 </body>
+<script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+    const uploadStatus = document.getElementById('uploadStatus');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = '#007bff';
+        dropZone.style.backgroundColor = 'rgba(0, 123, 255, 0.05)';
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.style.borderColor = '#e0e0e0';
+        dropZone.style.backgroundColor = 'transparent';
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = '#e0e0e0';
+        dropZone.style.backgroundColor = 'transparent';
+        handleFiles(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener('change', () => {
+        handleFiles(fileInput.files);
+    });
+
+    function handleFiles(files) {
+        if (files.length === 0) return;
+
+        if (files.length > 20) {
+            alert('Error: Maximum 20 files allowed.');
+            return;
+        }
+
+        // Clear previous list if needed, or append. Let's clear for now to keep it clean per batch.
+        fileList.innerHTML = '';
+        uploadStatus.style.display = 'none';
+
+        Array.from(files).forEach(file => {
+            uploadFile(file);
+        });
+    }
+
+    function uploadFile(file) {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        
+        const fileInfo = document.createElement('div');
+        fileInfo.className = 'file-info';
+        
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-file status-icon';
+        
+        const name = document.createElement('div');
+        name.className = 'file-name';
+        name.textContent = file.name;
+        
+        fileInfo.appendChild(icon);
+        fileInfo.appendChild(name);
+        
+        const status = document.createElement('div');
+        status.className = 'file-status';
+        
+        const spinner = document.createElement('i');
+        spinner.className = 'fas fa-spinner status-icon';
+        status.appendChild(spinner);
+        
+        fileItem.appendChild(fileInfo);
+        fileItem.appendChild(status);
+        
+        fileList.appendChild(fileItem);
+
+        const formData = new FormData();
+        formData.append('files', file);
+
+        fetch('{% url "upload_files" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                fileItem.classList.add('error');
+                status.innerHTML = `<i class="fas fa-times-circle status-icon" style="color: #f44336;"></i> <span style="color: #f44336;">${data.error}</span>`;
+            } else {
+                fileItem.classList.add('success');
+                status.innerHTML = '<i class="fas fa-check-circle status-icon" style="color: #4caf50;"></i>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            fileItem.classList.add('error');
+            status.innerHTML = '<i class="fas fa-exclamation-circle status-icon" style="color: #f44336;"></i> <span style="color: #f44336;">Network Error</span>';
+        });
+    }
+</script>
 </html>

@@ -110,3 +110,5 @@ NINJA_JWT = {
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_URL = 'login'
+
+TEMP_UPLOAD_DIR = BASE_DIR / 'temp_uploads'
