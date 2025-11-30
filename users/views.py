@@ -41,7 +41,7 @@ def upload_files(request):
     if len(files) > 20:
         return JsonResponse({'error': 'Maximum 20 files allowed'}, status=400)
         
-    upload_dir = settings.TEMP_UPLOAD_DIR
+    upload_dir = settings.TEMP_UPLOAD_DIR / str(request.user.id)
     upload_dir.mkdir(parents=True, exist_ok=True)
     
     saved_files = []
@@ -59,7 +59,7 @@ def upload_files(request):
 
 @login_required
 def file_list(request):
-    upload_dir = settings.TEMP_UPLOAD_DIR
+    upload_dir = settings.TEMP_UPLOAD_DIR / str(request.user.id)
     files = []
     if upload_dir.exists():
         files = [f.name for f in upload_dir.iterdir() if f.is_file()]

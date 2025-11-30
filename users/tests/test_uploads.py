@@ -30,9 +30,10 @@ class FileUploadTests(TestCase):
         response = self.client.post(self.url, {'files': [file1, file2]})
         
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(settings.TEMP_UPLOAD_DIR.exists())
-        self.assertTrue((settings.TEMP_UPLOAD_DIR / "file1.txt").exists())
-        self.assertTrue((settings.TEMP_UPLOAD_DIR / "file2.txt").exists())
+        user_upload_dir = settings.TEMP_UPLOAD_DIR / str(self.user.id)
+        self.assertTrue(user_upload_dir.exists())
+        self.assertTrue((user_upload_dir / "file1.txt").exists())
+        self.assertTrue((user_upload_dir / "file2.txt").exists())
 
     def test_upload_too_many_files(self):
         files = [SimpleUploadedFile(f"file{i}.txt", b"content") for i in range(21)]
