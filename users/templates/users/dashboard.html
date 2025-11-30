@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Tagai</title>
+    <link rel="stylesheet" href="{% static 'users/css/dashboard.css' %}">
+    <!-- Using FontAwesome for icons as placeholders, assuming it's available or we can use SVGs later -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="sidebar">
+        <a href="#" class="sidebar-item active">
+            <i class="fas fa-cloud-upload-alt sidebar-icon"></i>
+            Upload Files
+        </a>
+        <a href="#" class="sidebar-item">
+            <i class="fas fa-tags sidebar-icon"></i>
+            Keywording Tool
+        </a>
+        <a href="#" class="sidebar-item">
+            <i class="fas fa-chart-bar sidebar-icon"></i>
+            Usage
+        </a>
+    </div>
+
+    <div class="main-content">
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+
+        <div class="drop-zone">
+            <i class="fas fa-cloud-upload-alt drop-zone-icon"></i>
+            <div class="drop-zone-text">Drop files here</div>
+            <div class="drop-zone-subtext">or click to browse (max 500 files)</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -32,3 +32,14 @@ class LoginTest(TestCase):
         response = self.client.post(self.login_url, {'username': 'testuser', 'password': 'wrongpassword'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Please enter a correct username and password. Note that both fields may be case-sensitive.")
+
+    def test_home_redirects_if_not_logged_in(self):
+        response = self.client.get(reverse('home'))
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(self.login_url))
+
+    def test_home_renders_dashboard_if_logged_in(self):
+        self.client.login(username='testuser', password='testpassword')
+        response = self.client.get(reverse('home'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'users/dashboard.html')
