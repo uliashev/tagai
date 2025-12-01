@@ -38,10 +38,17 @@ def upload_files(request):
     if not files:
         return JsonResponse({'error': 'No files provided'}, status=400)
         
-    if len(files) > settings.MAX_UPLOAD_FILES:
-        return JsonResponse({'error': f'Maximum {settings.MAX_UPLOAD_FILES} files allowed'}, status=400)
-        
     upload_dir = settings.TEMP_UPLOAD_DIR / str(request.user.id)
+    
+    current_file_count = 0
+    if upload_dir.exists():
+        current_file_count = len([f for f in upload_dir.iterdir() if f.is_file()])
+
+    if current_file_count + len(files) > settings.MAX_UPLOAD_FILES:
+        return JsonResponse({
+            'error': f'Upload limit exceeded. You have {current_file_count} files and can upload {settings.MAX_UPLOAD_FILES - current_file_count} more.'
+        }, status=400)
+
     upload_dir.mkdir(parents=True, exist_ok=True)
     
     saved_files = []
