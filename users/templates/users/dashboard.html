@@ -21,7 +21,7 @@
         <div class="drop-zone" id="dropZone">
             <i class="fas fa-cloud-upload-alt drop-zone-icon"></i>
             <div class="drop-zone-text">Drop files here</div>
-            <div class="drop-zone-subtext">or click to browse (max 20 files)</div>
+            <div class="drop-zone-subtext">or click to browse (max {{ max_upload_files }} files)</div>
             <input type="file" id="fileInput" multiple style="display: none;">
         </div>
         <div id="fileList"></div>
@@ -61,8 +61,9 @@
     function handleFiles(files) {
         if (files.length === 0) return;
 
-        if (files.length > 20) {
-            alert('Error: Maximum 20 files allowed.');
+        const maxFiles = {{ max_upload_files }};
+        if (files.length > maxFiles) {
+            alert(`Error: Maximum ${maxFiles} files allowed.`);
             return;
         }
 

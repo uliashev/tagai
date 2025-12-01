@@ -15,7 +15,7 @@ class UserLoginView(LoginView):
 
 @login_required
 def home(request):
-    return render(request, 'users/dashboard.html')
+    return render(request, 'users/dashboard.html', {'max_upload_files': settings.MAX_UPLOAD_FILES})
 
 @login_required
 def settings_view(request):
@@ -38,8 +38,8 @@ def upload_files(request):
     if not files:
         return JsonResponse({'error': 'No files provided'}, status=400)
         
-    if len(files) > 20:
-        return JsonResponse({'error': 'Maximum 20 files allowed'}, status=400)
+    if len(files) > settings.MAX_UPLOAD_FILES:
+        return JsonResponse({'error': f'Maximum {settings.MAX_UPLOAD_FILES} files allowed'}, status=400)
         
     upload_dir = settings.TEMP_UPLOAD_DIR / str(request.user.id)
     upload_dir.mkdir(parents=True, exist_ok=True)

@@ -112,3 +112,4 @@ LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_URL = 'login'
 
 TEMP_UPLOAD_DIR = BASE_DIR / 'temp_uploads'
+MAX_UPLOAD_FILES = 20
