@@ -83,19 +83,59 @@
                 {% endfor %}
             {% endif %}
 
-            <form method="post">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="{{ form.gemini_api_key.id_for_label }}">{{ form.gemini_api_key.label }}</label>
-                    {{ form.gemini_api_key }}
-                    {% if form.gemini_api_key.errors %}
-                        <div style="color: #ff6b6b; font-size: 0.9em; margin-top: 5px;">
-                            {{ form.gemini_api_key.errors }}
-                        </div>
-                    {% endif %}
-                </div>
-                <button type="submit" class="btn-save">Save Changes</button>
-            </form>
+            <!-- Block 1: Gemini -->
+            <div class="settings-block">
+                <h3 style="color: #fff; border-bottom: 1px solid #444; padding-bottom: 10px; margin-bottom: 20px;">Gemini</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="{{ gemini_form.gemini_api_key.id_for_label }}">{{ gemini_form.gemini_api_key.label }}</label>
+                        {{ gemini_form.gemini_api_key }}
+                        {% if gemini_form.gemini_api_key.errors %}
+                            <div style="color: #ff6b6b; font-size: 0.9em; margin-top: 5px;">
+                                {{ gemini_form.gemini_api_key.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ gemini_form.gemini_prompt.id_for_label }}">{{ gemini_form.gemini_prompt.label }}</label>
+                        {{ gemini_form.gemini_prompt }}
+                        {% if gemini_form.gemini_prompt.errors %}
+                            <div style="color: #ff6b6b; font-size: 0.9em; margin-top: 5px;">
+                                {{ gemini_form.gemini_prompt.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <button type="submit" name="submit_gemini" class="btn-save">Save</button>
+                </form>
+            </div>
+
+            <!-- Block 2: OpenAI -->
+            <div class="settings-block" style="margin-top: 30px;">
+                <h3 style="color: #fff; border-bottom: 1px solid #444; padding-bottom: 10px; margin-bottom: 20px;">Openai</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="{{ openai_form.openai_api_key.id_for_label }}">{{ openai_form.openai_api_key.label }}</label>
+                        {{ openai_form.openai_api_key }}
+                        {% if openai_form.openai_api_key.errors %}
+                            <div style="color: #ff6b6b; font-size: 0.9em; margin-top: 5px;">
+                                {{ openai_form.openai_api_key.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ openai_form.openai_prompt.id_for_label }}">{{ openai_form.openai_prompt.label }}</label>
+                        {{ openai_form.openai_prompt }}
+                        {% if openai_form.openai_prompt.errors %}
+                            <div style="color: #ff6b6b; font-size: 0.9em; margin-top: 5px;">
+                                {{ openai_form.openai_prompt.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <button type="submit" name="submit_openai" class="btn-save">Save</button>
+                </form>
+            </div>
         </div>
     </div>
 </body>

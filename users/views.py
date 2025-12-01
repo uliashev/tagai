@@ -7,7 +7,7 @@ from django.conf import settings
 from django.views.decorators.http import require_POST
 import os
 import shutil
-from .forms import UserLoginForm, SettingsForm
+from .forms import UserLoginForm, GeminiSettingsForm, OpenAISettingsForm
 
 class UserLoginView(LoginView):
     authentication_form = UserLoginForm
@@ -20,16 +20,27 @@ def home(request):
 
 @login_required
 def settings_view(request):
+    gemini_form = GeminiSettingsForm(instance=request.user)
+    openai_form = OpenAISettingsForm(instance=request.user)
+
     if request.method == 'POST':
-        form = SettingsForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Settings updated successfully.')
-            return redirect('settings')
-    else:
-        form = SettingsForm(instance=request.user)
+        if 'submit_gemini' in request.POST:
+            gemini_form = GeminiSettingsForm(request.POST, instance=request.user)
+            if gemini_form.is_valid():
+                gemini_form.save()
+                messages.success(request, 'Gemini settings updated successfully.')
+                return redirect('settings')
+        elif 'submit_openai' in request.POST:
+            openai_form = OpenAISettingsForm(request.POST, instance=request.user)
+            if openai_form.is_valid():
+                openai_form.save()
+                messages.success(request, 'OpenAI settings updated successfully.')
+                return redirect('settings')
     
-    return render(request, 'users/settings.html', {'form': form})
+    return render(request, 'users/settings.html', {
+        'gemini_form': gemini_form,
+        'openai_form': openai_form
+    })
 
 @login_required
 @require_POST
