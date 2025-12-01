@@ -56,6 +56,35 @@
             justify-content: center;
             align-items: center;
         }
+        .actions-container {
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: auto;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            color: #fff;
+        }
+        .btn-delete {
+            background-color: #f44336;
+        }
+        .btn-delete:hover {
+            background-color: #d32f2f;
+        }
+        .btn-primary {
+            background-color: var(--accent-color);
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
@@ -78,6 +107,10 @@
                             <span class="file-name">{{ file }}</span>
                         </div>
                     {% endfor %}
+                </div>
+                <div class="actions-container">
+                    <button class="btn btn-delete">Delete</button>
+                    <button class="btn btn-primary">Process</button>
                 </div>
             {% else %}
                 <div class="empty-state">
