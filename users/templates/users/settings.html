@@ -98,6 +98,15 @@
                         {% endif %}
                     </div>
                     <div class="form-group">
+                        <label for="{{ gemini_form.gemini_model.id_for_label }}">{{ gemini_form.gemini_model.label }}</label>
+                        {{ gemini_form.gemini_model }}
+                        {% if gemini_form.gemini_model.errors %}
+                            <div style="color: #ff6b6b; font-size: 0.9em; margin-top: 5px;">
+                                {{ gemini_form.gemini_model.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
                         <label for="{{ gemini_form.gemini_prompt.id_for_label }}">{{ gemini_form.gemini_prompt.label }}</label>
                         {{ gemini_form.gemini_prompt }}
                         {% if gemini_form.gemini_prompt.errors %}
@@ -121,6 +130,15 @@
                         {% if openai_form.openai_api_key.errors %}
                             <div style="color: #ff6b6b; font-size: 0.9em; margin-top: 5px;">
                                 {{ openai_form.openai_api_key.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ openai_form.openai_model.id_for_label }}">{{ openai_form.openai_model.label }}</label>
+                        {{ openai_form.openai_model }}
+                        {% if openai_form.openai_model.errors %}
+                            <div style="color: #ff6b6b; font-size: 0.9em; margin-top: 5px;">
+                                {{ openai_form.openai_model.errors }}
                             </div>
                         {% endif %}
                     </div>

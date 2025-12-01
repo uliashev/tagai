@@ -12,6 +12,11 @@ class GeminiSettingsForm(forms.ModelForm):
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Gemini API Key'})
     )
+    gemini_model = forms.CharField(
+        label="LLM model",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter LLM Model'})
+    )
     gemini_prompt = forms.CharField(
         label="Gemini Prompt",
         required=False,
@@ -20,13 +25,18 @@ class GeminiSettingsForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['gemini_api_key', 'gemini_prompt']
+        fields = ['gemini_api_key', 'gemini_model', 'gemini_prompt']
 
 class OpenAISettingsForm(forms.ModelForm):
     openai_api_key = forms.CharField(
         label="Openai API-KEY",
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Openai API Key'})
+    )
+    openai_model = forms.CharField(
+        label="LLM model",
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter LLM Model'})
     )
     openai_prompt = forms.CharField(
         label="Openai Prompt",
@@ -36,4 +46,4 @@ class OpenAISettingsForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['openai_api_key', 'openai_prompt']
+        fields = ['openai_api_key', 'openai_model', 'openai_prompt']

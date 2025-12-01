@@ -19,11 +19,13 @@ class SettingsTest(TestCase):
         self.assertContains(response, 'Openai')
         self.assertContains(response, 'submit_gemini')
         self.assertContains(response, 'submit_openai')
+        self.assertContains(response, 'LLM model')
 
     def test_gemini_update(self):
         data = {
             'submit_gemini': 'Save',
             'gemini_api_key': 'test_gemini_key',
+            'gemini_model': 'gemini-pro',
             'gemini_prompt': 'test_gemini_prompt'
         }
         response = self.client.post(self.url, data)
@@ -31,6 +33,7 @@ class SettingsTest(TestCase):
         
         self.user.refresh_from_db()
         self.assertEqual(self.user.gemini_api_key, 'test_gemini_key')
+        self.assertEqual(self.user.gemini_model, 'gemini-pro')
         self.assertEqual(self.user.gemini_prompt, 'test_gemini_prompt')
         # OpenAI fields should be unchanged
         self.assertIsNone(self.user.openai_api_key)
@@ -39,6 +42,7 @@ class SettingsTest(TestCase):
         data = {
             'submit_openai': 'Save',
             'openai_api_key': 'test_openai_key',
+            'openai_model': 'gpt-4',
             'openai_prompt': 'test_openai_prompt'
         }
         response = self.client.post(self.url, data)
@@ -46,6 +50,7 @@ class SettingsTest(TestCase):
         
         self.user.refresh_from_db()
         self.assertEqual(self.user.openai_api_key, 'test_openai_key')
+        self.assertEqual(self.user.openai_model, 'gpt-4')
         self.assertEqual(self.user.openai_prompt, 'test_openai_prompt')
         # Gemini fields should be unchanged
         self.assertIsNone(self.user.gemini_api_key)
