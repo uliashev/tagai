@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.conf import settings
 from django.views.decorators.http import require_POST
 import os
+import shutil
 from .forms import UserLoginForm, SettingsForm
 
 class UserLoginView(LoginView):
@@ -72,3 +73,18 @@ def file_list(request):
         files = [f.name for f in upload_dir.iterdir() if f.is_file()]
     
     return render(request, 'users/files.html', {'files': files})
+
+@login_required
+@require_POST
+def delete_files(request):
+    upload_dir = settings.TEMP_UPLOAD_DIR / str(request.user.id)
+    if upload_dir.exists():
+        # Remove all files in the directory
+        for file in upload_dir.iterdir():
+            if file.is_file():
+                file.unlink()
+        messages.success(request, 'All files deleted successfully.')
+    else:
+        messages.info(request, 'No files to delete.')
+        
+    return redirect('files')

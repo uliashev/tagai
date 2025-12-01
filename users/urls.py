@@ -9,5 +9,6 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('settings/', views.settings_view, name='settings'),
     path('upload/', views.upload_files, name='upload_files'),
-    path('files/', views.file_list, name='file_list'),
+    path('files/', views.file_list, name='files'),
+    path('delete-files/', views.delete_files, name='delete_files'),
 ]

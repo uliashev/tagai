@@ -109,7 +109,10 @@
                     {% endfor %}
                 </div>
                 <div class="actions-container">
-                    <button class="btn btn-delete">Delete</button>
+                    <form action="{% url 'delete_files' %}" method="post" style="margin: 0;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-delete">Delete</button>
+                    </form>
                     <button class="btn btn-primary">Process</button>
                 </div>
             {% else %}

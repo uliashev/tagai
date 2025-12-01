@@ -3,7 +3,7 @@
         <i class="fas fa-cloud-upload-alt sidebar-icon"></i>
         Upload Files
     </a>
-    <a href="{% url 'file_list' %}" class="sidebar-item {% if request.resolver_match.url_name == 'file_list' %}active{% endif %}">
+    <a href="{% url 'files' %}" class="sidebar-item {% if request.resolver_match.url_name == 'files' %}active{% endif %}">
         <i class="fas fa-folder sidebar-icon"></i>
         Files
     </a>
