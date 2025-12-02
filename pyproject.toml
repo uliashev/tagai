@@ -23,6 +23,9 @@ dependencies = [
     "django-ninja-jwt>=5.4.0",
     "celery>=5.6.0",
     "redis>=7.1.0",
+    "pillow",
+    "google-generativeai",
+    "pyexiftool",
 ]
 
 [dependency-groups]
