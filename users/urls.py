@@ -12,4 +12,5 @@ urlpatterns = [
     path('files/', views.file_list, name='files'),
     path('delete-files/', views.delete_files, name='delete_files'),
     path('gemini/', views.gemini_view, name='gemini'),
+    path('process-files/', views.process_files, name='process_files'),
 ]

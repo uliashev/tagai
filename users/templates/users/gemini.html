@@ -149,5 +149,37 @@
             </div>
         </div>
     </div>
+    <script>
+        document.querySelector('.btn-process').addEventListener('click', function() {
+            const btn = this;
+            const originalContent = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            fetch('{% url "process_files" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                } else {
+                    alert('Success: ' + data.message);
+                    // You might want to reload or update the UI here
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while starting processing.');
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            });
+        });
+    </script>
 </body>
 </html>

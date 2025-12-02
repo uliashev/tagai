@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView
@@ -9,6 +11,8 @@ import os
 import shutil
 from .forms import UserLoginForm, GeminiSettingsForm, OpenAISettingsForm
 
+
+logger = logging.getLogger(__name__)
 class UserLoginView(LoginView):
     authentication_form = UserLoginForm
     template_name = 'users/login.html'
@@ -108,3 +112,25 @@ def gemini_view(request):
         files = [f.name for f in upload_dir.iterdir() if f.is_file()]
     
     return render(request, 'users/gemini.html', {'files': files})
+
+@login_required
+@require_POST
+def process_files(request):
+    logger.info('Processing files')
+    upload_dir = settings.TEMP_UPLOAD_DIR / str(request.user.id)
+    if not upload_dir.exists():
+        return JsonResponse({'error': 'No files to process'}, status=400)
+    
+    files = [f for f in upload_dir.iterdir() if f.is_file()]
+    
+    if not files:
+        return JsonResponse({'error': 'No files to process'}, status=400)
+        
+    # Import here to avoid circular imports if any, though unlikely given structure
+    from core.tasks import process_file_task
+    
+    for file_path in files:
+        # Pass absolute string path to Celery task
+        process_file_task.delay(str(file_path.resolve()))
+        
+    return JsonResponse({'message': f'Processing started for {len(files)} files'})
