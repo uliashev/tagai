@@ -21,6 +21,8 @@ dependencies = [
     "ruff",
     "psycopg[binary]>=3.2.13",
     "django-ninja-jwt>=5.4.0",
+    "celery>=5.6.0",
+    "redis>=7.1.0",
 ]
 
 [dependency-groups]

@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     DB_USER: str = Field(alias="POSTGRES_USER")
     DB_PASSWORD: str = Field(alias="POSTGRES_PASSWORD")
 
+    # Celery settings
+    CELERY_BROKER_URL: str = "redis://localhost:6379/0"
+    CELERY_RESULT_BACKEND: str = "redis://localhost:6379/0"
+
     # Environment
     DJANGO_ENV: Literal["local", "docker", "compose"] = "local"
 
