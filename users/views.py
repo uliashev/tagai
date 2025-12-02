@@ -99,3 +99,12 @@ def delete_files(request):
         messages.info(request, 'No files to delete.')
         
     return redirect('files')
+
+@login_required
+def gemini_view(request):
+    upload_dir = settings.TEMP_UPLOAD_DIR / str(request.user.id)
+    files = []
+    if upload_dir.exists():
+        files = [f.name for f in upload_dir.iterdir() if f.is_file()]
+    
+    return render(request, 'users/gemini.html', {'files': files})

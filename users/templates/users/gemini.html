@@ -1,0 +1,153 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini - Tagai</title>
+    <link rel="stylesheet" href="{% static 'users/css/dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .gemini-container {
+            position: absolute;
+            top: 10%;
+            bottom: 10%;
+            left: 5%;
+            right: 5%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .gemini-content {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            min-height: 0; /* Important for nested flex scrolling */
+        }
+
+        .panel {
+            flex: 1;
+            background-color: var(--sidebar-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            min-width: 0; /* Prevent flex overflow */
+        }
+
+        .panel-header {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 1.2rem;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+        }
+
+        .file-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .file-list-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #444;
+            color: var(--text-color);
+        }
+
+        .file-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-icon {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        .actions-container {
+            display: flex;
+            justify-content: center;
+            margin-top: auto; /* Push to bottom if container has height */
+        }
+
+        .btn-process {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 12px 40px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-process:hover {
+            opacity: 0.9;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'users/sidebar.html' %}
+
+    <div class="main-content">
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+
+        <div class="gemini-container">
+            <div class="gemini-content">
+                <!-- Left Block: Files for Processing -->
+                <div class="panel">
+                    <h3 class="panel-header">Files for Processing</h3>
+                    {% if files %}
+                        <div class="file-list">
+                            {% for file in files %}
+                                <div class="file-list-item">
+                                    <i class="fas fa-file file-icon"></i>
+                                    <span class="file-name">{{ file }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                            No files available for processing.
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Right Block: Results/Output (Placeholder for now) -->
+                <div class="panel">
+                    <h3 class="panel-header">Results</h3>
+                    <div class="empty-state">
+                        <i class="fas fa-magic" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                        Results will appear here after processing.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Process Button -->
+            <div class="actions-container">
+                <button class="btn-process">
+                    <i class="fas fa-play"></i> Process
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
