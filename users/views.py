@@ -131,6 +131,6 @@ def process_files(request):
     
     for file_path in files:
         # Pass absolute string path to Celery task
-        process_file_task.delay(str(file_path.resolve()))
+        process_file_task.delay(str(file_path.resolve()), request.user.id)
         
     return JsonResponse({'message': f'Processing started for {len(files)} files'})
