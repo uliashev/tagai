@@ -108,10 +108,48 @@ def delete_files(request):
 def gemini_view(request):
     upload_dir = settings.TEMP_UPLOAD_DIR / str(request.user.id)
     files = []
-    if upload_dir.exists():
-        files = [f.name for f in upload_dir.iterdir() if f.is_file()]
+    processed_files = []
+    failed_files = []
     
-    return render(request, 'users/gemini.html', {'files': files})
+    if upload_dir.exists():
+        # Files that are NOT failed and NOT directories
+        files = [f.name for f in upload_dir.iterdir() if f.is_file() and not f.name.endswith('.failed')]
+        
+        # Processed files
+        processed_dir = upload_dir / 'discribed_gemini'
+        if processed_dir.exists():
+            processed_files = [f.name for f in processed_dir.iterdir() if f.is_file()]
+            
+        # Failed files (in the same dir, ending with .failed)
+        failed_files = [f.name.replace('.failed', '') for f in upload_dir.iterdir() if f.is_file() and f.name.endswith('.failed')]
+    
+    return render(request, 'users/gemini.html', {
+        'files': files,
+        'processed_files': processed_files,
+        'failed_files': failed_files
+    })
+
+@login_required
+def gemini_files_status(request):
+    upload_dir = settings.TEMP_UPLOAD_DIR / str(request.user.id)
+    files = []
+    processed_files = []
+    failed_files = []
+    
+    if upload_dir.exists():
+        files = [f.name for f in upload_dir.iterdir() if f.is_file() and not f.name.endswith('.failed')]
+        
+        processed_dir = upload_dir / 'discribed_gemini'
+        if processed_dir.exists():
+            processed_files = [f.name for f in processed_dir.iterdir() if f.is_file()]
+            
+        failed_files = [f.name.replace('.failed', '') for f in upload_dir.iterdir() if f.is_file() and f.name.endswith('.failed')]
+            
+    return JsonResponse({
+        'processing': files,
+        'processed': processed_files,
+        'failed': failed_files
+    })
 
 @login_required
 @require_POST
@@ -121,7 +159,18 @@ def process_files(request):
     if not upload_dir.exists():
         return JsonResponse({'error': 'No files to process'}, status=400)
     
-    files = [f for f in upload_dir.iterdir() if f.is_file()]
+    # Get normal files
+    files = [f for f in upload_dir.iterdir() if f.is_file() and not f.name.endswith('.failed')]
+    
+    # Also check for failed files to retry
+    failed_files_paths = [f for f in upload_dir.iterdir() if f.is_file() and f.name.endswith('.failed')]
+    
+    # Rename failed files back to normal to retry them
+    for f in failed_files_paths:
+        original_name = f.name.replace('.failed', '')
+        original_path = upload_dir / original_name
+        f.rename(original_path)
+        files.append(original_path)
     
     if not files:
         return JsonResponse({'error': 'No files to process'}, status=400)

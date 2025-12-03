@@ -1,7 +1,7 @@
 import json
 import logging
 import google.generativeai as genai
-from google.api_core.exceptions import InvalidArgument
+from google.api_core.exceptions import InvalidArgument, ResourceExhausted
 from PIL import Image
 import exiftool
 import os
@@ -41,6 +41,10 @@ def generate_stock_metadata(image_path, user):
     except InvalidArgument as e:
         logger.error(f"Invalid API Key provided: {e}")
         return {"error": "Invalid API Key. Please check your settings."}
+    except ResourceExhausted:
+        # Re-raise to allow Celery to handle retries
+        logger.warning("Quota exceeded. Re-raising ResourceExhausted for retry.")
+        raise
     except Exception:
         logger.exception("An error occurred during metadata generation.")
         return None

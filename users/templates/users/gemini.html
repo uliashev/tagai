@@ -114,11 +114,17 @@
                 <!-- Left Block: Files for Processing -->
                 <div class="panel">
                     <h3 class="panel-header">Files for Processing</h3>
-                    {% if files %}
+                    {% if files or failed_files %}
                         <div class="file-list">
                             {% for file in files %}
                                 <div class="file-list-item">
                                     <i class="fas fa-file file-icon"></i>
+                                    <span class="file-name">{{ file }}</span>
+                                </div>
+                            {% endfor %}
+                            {% for file in failed_files %}
+                                <div class="file-list-item">
+                                    <i class="fas fa-exclamation-circle file-icon" style="color: #f44336;"></i>
                                     <span class="file-name">{{ file }}</span>
                                 </div>
                             {% endfor %}
@@ -131,12 +137,23 @@
                     {% endif %}
                 </div>
 
-                <!-- Right Block: Results/Output (Placeholder for now) -->
+                <!-- Right Block: Results/Output -->
                 <div class="panel">
                     <h3 class="panel-header">Results</h3>
-                    <div class="empty-state">
-                        <i class="fas fa-magic" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
-                        Results will appear here after processing.
+                    <div id="results-list" class="file-list">
+                        {% if processed_files %}
+                            {% for file in processed_files %}
+                                <div class="file-list-item">
+                                    <i class="fas fa-check-circle file-icon" style="color: #4caf50;"></i>
+                                    <span class="file-name">{{ file }}</span>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">
+                                <i class="fas fa-magic" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                Results will appear here after processing.
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -166,19 +183,127 @@
             .then(data => {
                 if (data.error) {
                     alert('Error: ' + data.error);
+                    btn.disabled = false;
+                    btn.innerHTML = originalContent;
                 } else {
-                    alert('Success: ' + data.message);
-                    // You might want to reload or update the UI here
+                    // Start polling for status updates
+                    startPolling();
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('An error occurred while starting processing.');
-            })
-            .finally(() => {
                 btn.disabled = false;
                 btn.innerHTML = originalContent;
             });
+
+            function startPolling() {
+                const intervalId = setInterval(() => {
+                    fetch('{% url "gemini_files_status" %}')
+                    .then(response => response.json())
+                    .then(data => {
+                        updateUI(data);
+                        
+                        // Stop polling if no files are left processing
+                        if (data.processing.length === 0) {
+                            clearInterval(intervalId);
+                            btn.disabled = false;
+                            btn.innerHTML = originalContent;
+                            
+                            if (data.failed.length > 0) {
+                                alert('Processing completed with some errors. Please check the results.');
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error polling status:', error));
+                }, 2000); // Poll every 2 seconds
+            }
+
+            function updateUI(data) {
+                // Update Processing List (Left Panel)
+                const processingContainer = document.querySelector('.panel:first-child .file-list') || document.querySelector('.panel:first-child');
+                if (data.processing.length > 0 || data.failed.length > 0) {
+                    let html = '<div class="file-list">';
+                    
+                    // Pending files
+                    data.processing.forEach(file => {
+                        html += `
+                            <div class="file-list-item">
+                                <i class="fas fa-file file-icon"></i>
+                                <span class="file-name">${file}</span>
+                            </div>`;
+                    });
+                    
+                    // Failed files
+                    data.failed.forEach(file => {
+                        html += `
+                            <div class="file-list-item">
+                                <i class="fas fa-exclamation-circle file-icon" style="color: #f44336;"></i>
+                                <span class="file-name">${file}</span>
+                            </div>`;
+                    });
+                    
+                    html += '</div>';
+                    
+                    // If we are replacing the empty state, we need to be careful
+                    if (processingContainer.querySelector('.panel-header')) {
+                         // This is the panel itself, append after header
+                         const header = processingContainer.querySelector('.panel-header');
+                         processingContainer.innerHTML = '';
+                         processingContainer.appendChild(header);
+                         processingContainer.insertAdjacentHTML('beforeend', html);
+                    } else {
+                        // It's the file-list div or empty state
+                        const panel = processingContainer.closest('.panel');
+                        const header = panel.querySelector('.panel-header');
+                        panel.innerHTML = '';
+                        panel.appendChild(header);
+                        panel.insertAdjacentHTML('beforeend', html);
+                    }
+                } else {
+                    const panel = document.querySelector('.panel:first-child');
+                    const header = panel.querySelector('.panel-header');
+                    panel.innerHTML = '';
+                    panel.appendChild(header);
+                    panel.insertAdjacentHTML('beforeend', `
+                        <div class="empty-state">
+                            <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                            No files available for processing.
+                        </div>
+                    `);
+                }
+
+                // Update Results List (Right Panel)
+                const resultsPanel = document.querySelectorAll('.panel')[1];
+                const resultsHeader = resultsPanel.querySelector('.panel-header');
+                
+                if (data.processed.length > 0) {
+                    let html = '<div id="results-list" class="file-list">';
+                    
+                    data.processed.forEach(file => {
+                        html += `
+                            <div class="file-list-item">
+                                <i class="fas fa-check-circle file-icon" style="color: #4caf50;"></i>
+                                <span class="file-name">${file}</span>
+                            </div>`;
+                    });
+                    
+                    html += '</div>';
+                    
+                    resultsPanel.innerHTML = '';
+                    resultsPanel.appendChild(resultsHeader);
+                    resultsPanel.insertAdjacentHTML('beforeend', html);
+                } else {
+                    resultsPanel.innerHTML = '';
+                    resultsPanel.appendChild(resultsHeader);
+                    resultsPanel.insertAdjacentHTML('beforeend', `
+                        <div class="empty-state">
+                            <i class="fas fa-magic" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                            Results will appear here after processing.
+                        </div>
+                    `);
+                }
+            }
         });
     </script>
 </body>

@@ -13,4 +13,5 @@ urlpatterns = [
     path('delete-files/', views.delete_files, name='delete_files'),
     path('gemini/', views.gemini_view, name='gemini'),
     path('process-files/', views.process_files, name='process_files'),
+    path('gemini/status/', views.gemini_files_status, name='gemini_files_status'),
 ]
