@@ -98,6 +98,42 @@
             color: #888;
             margin-top: 20px;
         }
+
+        .panel-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #444;
+        }
+
+        .btn-download, .btn-clear {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: white;
+            transition: opacity 0.2s;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-download {
+            background-color: #2196f3; /* Blue */
+        }
+
+        .btn-clear {
+            background-color: #f44336; /* Red */
+        }
+
+        .btn-download:hover, .btn-clear:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
@@ -154,6 +190,14 @@
                                 Results will appear here after processing.
                             </div>
                         {% endif %}
+                    </div>
+                    <div class="panel-actions" style="{% if not processed_files %}display: none;{% endif %}">
+                        <a href="{% url 'download_gemini_results' %}" class="btn-download">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                        <button class="btn-clear">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
                     </div>
                 </div>
             </div>
@@ -277,6 +321,17 @@
                 const resultsPanel = document.querySelectorAll('.panel')[1];
                 const resultsHeader = resultsPanel.querySelector('.panel-header');
                 
+                const actionsHtml = `
+                    <div class="panel-actions">
+                        <a href="{% url 'download_gemini_results' %}" class="btn-download">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                        <button class="btn-clear">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
+                    </div>
+                `;
+                
                 if (data.processed.length > 0) {
                     let html = '<div id="results-list" class="file-list">';
                     
@@ -293,6 +348,9 @@
                     resultsPanel.innerHTML = '';
                     resultsPanel.appendChild(resultsHeader);
                     resultsPanel.insertAdjacentHTML('beforeend', html);
+                    resultsPanel.insertAdjacentHTML('beforeend', actionsHtml);
+                    
+                    attachClearListener();
                 } else {
                     resultsPanel.innerHTML = '';
                     resultsPanel.appendChild(resultsHeader);
@@ -304,7 +362,56 @@
                     `);
                 }
             }
+
         });
+
+        function attachClearListener() {
+            const clearBtn = document.querySelector('.btn-clear');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', function() {
+                    if (!confirm('Are you sure you want to clear all results? This cannot be undone.')) {
+                        return;
+                    }
+                    
+                    const btn = this;
+                    const originalContent = btn.innerHTML;
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Clearing...';
+                    
+                    fetch('{% url "clear_gemini_results" %}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            const resultsPanel = document.querySelectorAll('.panel')[1];
+                            const resultsHeader = resultsPanel.querySelector('.panel-header');
+                            
+                            resultsPanel.innerHTML = '';
+                            resultsPanel.appendChild(resultsHeader);
+                            resultsPanel.insertAdjacentHTML('beforeend', `
+                                <div class="empty-state">
+                                    <i class="fas fa-magic" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                    Results will appear here after processing.
+                                </div>
+                            `);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while clearing results.');
+                        btn.disabled = false;
+                        btn.innerHTML = originalContent;
+                    });
+                });
+            }
+        }
+        
+        // Initial attach
+        attachClearListener();
     </script>
 </body>
 </html>

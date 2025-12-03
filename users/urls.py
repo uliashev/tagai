@@ -14,4 +14,6 @@ urlpatterns = [
     path('gemini/', views.gemini_view, name='gemini'),
     path('process-files/', views.process_files, name='process_files'),
     path('gemini/status/', views.gemini_files_status, name='gemini_files_status'),
+    path('gemini/download/', views.download_gemini_results, name='download_gemini_results'),
+    path('gemini/clear/', views.clear_gemini_results, name='clear_gemini_results'),
 ]

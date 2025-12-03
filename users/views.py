@@ -4,12 +4,15 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.conf import settings
 from django.views.decorators.http import require_POST
 import os
 import shutil
 from .forms import UserLoginForm, GeminiSettingsForm, OpenAISettingsForm
+import zipfile
+import io
+from datetime import datetime
 
 
 logger = logging.getLogger(__name__)
@@ -183,3 +186,41 @@ def process_files(request):
         process_file_task.delay(str(file_path.resolve()), request.user.id)
         
     return JsonResponse({'message': f'Processing started for {len(files)} files'})
+
+@login_required
+def download_gemini_results(request):
+    upload_dir = settings.TEMP_UPLOAD_DIR / str(request.user.id)
+    processed_dir = upload_dir / 'discribed_gemini'
+    
+    if not processed_dir.exists():
+        messages.error(request, 'No results to download.')
+        return redirect('gemini')
+        
+    # Create zip in memory
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        for file_path in processed_dir.iterdir():
+            if file_path.is_file():
+                zip_file.write(file_path, file_path.name)
+                
+    buffer.seek(0)
+    
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    filename = f'gemini_{timestamp}.zip'
+    
+    response = HttpResponse(buffer, content_type='application/zip')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+
+@login_required
+@require_POST
+def clear_gemini_results(request):
+    upload_dir = settings.TEMP_UPLOAD_DIR / str(request.user.id)
+    processed_dir = upload_dir / 'discribed_gemini'
+    
+    if processed_dir.exists():
+        for file_path in processed_dir.iterdir():
+            if file_path.is_file():
+                file_path.unlink()
+                
+    return JsonResponse({'status': 'success'})
