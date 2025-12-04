@@ -14,6 +14,7 @@ RUN uv pip install --system --editable .
 
 COPY . .
 
+RUN chmod +x start.sh
 RUN SECRET_KEY=dummy python manage.py collectstatic --noinput
 
 EXPOSE 8000
