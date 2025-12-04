@@ -12,11 +12,11 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     # Database settings
-    DB_HOST: str = Field(alias="POSTGRES_HOST")
-    DB_PORT: int = Field(alias="POSTGRES_PORT")
-    DB_NAME: str = Field(alias="POSTGRES_DB")
-    DB_USER: str = Field(alias="POSTGRES_USER")
-    DB_PASSWORD: str = Field(alias="POSTGRES_PASSWORD")
+    DB_HOST: str = Field(default="localhost", alias="POSTGRES_HOST")
+    DB_PORT: int = Field(default=5432, alias="POSTGRES_PORT")
+    DB_NAME: str = Field(default="postgres", alias="POSTGRES_DB")
+    DB_USER: str = Field(default="postgres", alias="POSTGRES_USER")
+    DB_PASSWORD: str = Field(default="postgres", alias="POSTGRES_PASSWORD")
 
     # Celery settings
     CELERY_BROKER_URL: str = "redis://localhost:6379/0"

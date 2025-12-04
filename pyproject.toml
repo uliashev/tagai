@@ -26,6 +26,9 @@ dependencies = [
     "pillow",
     "google-generativeai",
     "pyexiftool",
+    "uvicorn>=0.38.0",
+    "whitenoise>=6.11.0",
+    "dj-database-url>=3.0.1",
 ]
 
 [dependency-groups]
