@@ -19,8 +19,8 @@ class Settings(BaseSettings):
     DB_PASSWORD: str = Field(default="postgres", alias="POSTGRES_PASSWORD")
 
     # Celery settings
-    CELERY_BROKER_URL: str = "redis://localhost:6379/0"
-    CELERY_RESULT_BACKEND: str = "redis://localhost:6379/0"
+    CELERY_BROKER_URL: str = Field(default="redis://localhost:6379/0", alias="CELERY_BROKER_URL")
+    CELERY_RESULT_BACKEND: str = Field(default="redis://localhost:6379/0", alias="CELERY_RESULT_BACKEND")
 
     # Environment
     DJANGO_ENV: Literal["local", "docker", "compose"] = "local"
