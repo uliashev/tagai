@@ -13,7 +13,7 @@ User = get_user_model()
 import shutil
 import os
 
-@shared_task(bind=True, max_retries=None)
+@shared_task(bind=True, max_retries=None, rate_limit='2/m')
 def process_file_task(self, file_path, user_id):
     """
     Process a single file:
