@@ -27,6 +27,7 @@ dependencies = [
     "google-generativeai",
     "pyexiftool",
     "uvicorn>=0.38.0",
+    "gunicorn",
     "flower",
 ]
 
