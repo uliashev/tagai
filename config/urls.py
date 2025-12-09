@@ -11,3 +11,6 @@ urlpatterns = [
     path("api/", api.urls),
     path("", include("users.urls")),
 ]
+
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+urlpatterns += staticfiles_urlpatterns()
