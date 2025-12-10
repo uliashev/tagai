@@ -1,0 +1,48 @@
+version: "1"
+services:
+  - type: web
+    name: tagai
+    runtime: docker
+    repo: https://github.com/uliashev/tagai
+    branch: deploy
+    plan: starter
+    region: frankfurt
+
+    dockerCommand: "sh render_start.sh"
+    # ------------------------
+
+    dockerContext: .
+    dockerfilePath: ./Dockerfile
+
+    disk:
+      name: disk
+      mountPath: /app/temp_uploads
+      sizeGB: 1
+
+    autoDeployTrigger: commit
+
+    envVars:
+      - key: POSTGRES_PASSWORD
+        sync: false
+      - key: POSTGRES_HOST
+        sync: false
+      - key: DJANGO_ENV
+        sync: false
+      - key: CELERY_RESULT_BACKEND
+        sync: false
+      - key: CELERY_BROKER_URL
+        sync: false
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: POSTGRES_USER
+        sync: false
+      - key: POSTGRES_PORT
+        sync: false
+      - key: POSTGRES_DB
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+      - key: DEBUG
+        sync: false
+      - key: SECRET_KEY
+        sync: false
